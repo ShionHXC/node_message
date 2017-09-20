@@ -30,7 +30,6 @@ exports.insert = function(collectionName, json, callback){
 }
 
 exports.getData = function(collectionName, json, C, D){
-    console.log(arguments.length);
     if(arguments.length === 3){
         var page = 1;
         var callback = C;
@@ -64,6 +63,21 @@ exports.getAllCount = function(collectionName,callback){
         db.collection(collectionName).count({}).then(function(count){
             callback(count);
             db.close();
+        })
+    })
+}
+
+// 删除留言
+exports.delMeg = function(collectionName,json,callback){
+    _connectDB(function(db){
+        db.collection(collectionName).deleteMany(json,function(err, result){
+            if(err){
+                console.log("删除失败");
+                db.close();
+                return;
+            }
+            db.close();
+            callback(err, result);
         })
     })
 }

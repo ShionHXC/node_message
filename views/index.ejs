@@ -61,10 +61,14 @@
                         +   '<h4 class="list-group-item-heading">'+resultArr[i].name+'</h4>'
                         +  '<p class="list-group-item-text">'+resultArr[i].message+'</p>'
                         +  '<p class="list-group-item-text">'+resultArr[i].date+'</p>'
+                        +  '<button type="button" class="btn btn-warning btn-del" data-id="'+resultArr[i]._id+'" >删除</button>'
                         + '</a>'
                         +'</div>'
                 }
                 $("#list").html(str);
+                // 删除
+                deleteMeg();
+
                 var pageCount = result.pageCount;
                 var page = result.page;
                 var pageStr = '<li data-page="reduce">'
@@ -111,7 +115,18 @@
                     $(".alert").fadeOut();
                 },2000)
             })
-        })
+        });
+        // 删除信息
+        function deleteMeg(){
+            $(".btn-del").click(function(){
+                var megId = $(this).attr("data-id");
+                $.post("/delMsg",{"id":megId},function(result){
+                    if(result.errCode == 0){
+                        initInfo(1);
+                    }
+                })
+            })
+        }
     })
 </script>
 </body>

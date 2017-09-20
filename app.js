@@ -4,6 +4,7 @@
 var express = require("express");
 var app = express();
 var db = require("./model/db.js");
+var ObjectId = require("mongodb").ObjectID;
 var formidable = require('formidable');
 app.set("view engine","ejs");
 // 静态
@@ -62,8 +63,30 @@ app.post("/submit",function(req,res,next){
     });
 });
 
+// 删除留言
 
-
+app.post("/delMsg",function(req,res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields) {
+        // 写进数据库
+        var _id = fields.id;
+        var json = {
+            _id : ObjectId(_id)
+        }
+        db.delMeg("message_new",json,function(err, result){
+            if(err){
+                console.log("删除失败");
+                res.json({
+                    "errCode" : 1
+                })
+                return;
+            }
+            res.json({
+                "errCode" : 0
+            })
+        })
+    });
+})
 
 
 app.listen(3000);
