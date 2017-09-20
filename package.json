@@ -1,0 +1,32 @@
+{
+  "name": "node_message",
+  "version": "1.0.0",
+  "description": "留言本",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShionHXC/node_message.git"
+  },
+  "keywords": [
+    "node",
+    "mongodb",
+    "express"
+  ],
+  "author": "huangxc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShionHXC/node_message/issues"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.1",
+    "ejs": "^2.5.7",
+    "express": "^4.15.4",
+    "formidable": "^1.1.1",
+    "mongodb": "^2.2.31",
+    "silly-datetime": "^0.1.2"
+  },
+  "homepage": "https://github.com/ShionHXC/node_message#readme"
+}

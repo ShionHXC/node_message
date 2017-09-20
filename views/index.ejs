@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>留言本</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+    <style>
+        .alert{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>我的留言本</h1>
+    <form class="form-horizontal col-lg-6">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-10">
+                <input name="name" type="text" class="form-control" id="name" placeholder="姓名">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="message" class="col-sm-2 control-label">留言</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="3" id="message" placeholder="留言" name="message"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-success">提交</button>
+            </div>
+        </div>
+        <div class="alert alert-success" role="alert">提交成功</div>
+        <div class="alert alert-danger" role="alert">提交失败</div>
+        <div id="list"></div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination"></ul>
+        </nav>
+    </form>
+
+</div>
+
+<script src="/jquery.min.js"></script>
+<script src="/bootstrap/js/bootstrap.js"></script>
+<script>
+    $(function(){
+        initInfo(1);
+        function initInfo(pageNum){
+            $.get("/getList?page="+pageNum,function(result){
+                var resultArr = result.result;
+                var str = "";
+                for(var i = 0,len = resultArr.length; i<len; i++){
+                    str += '<div class="list-group">'
+                        +   '<a href="javascript:;" class="list-group-item active">'
+                        +   '<h4 class="list-group-item-heading">'+resultArr[i].name+'</h4>'
+                        +  '<p class="list-group-item-text">'+resultArr[i].message+'</p>'
+                        +  '<p class="list-group-item-text">'+resultArr[i].date+'</p>'
+                        + '</a>'
+                        +'</div>'
+                }
+                $("#list").html(str);
+                var pageCount = result.pageCount;
+                var page = result.page;
+                var pageStr = '<li data-page="reduce">'
+                               + '<a href="javascript:;" aria-label="Previous">'
+                               +     '<span aria-hidden="true">&laquo;</span>'
+                               + '</a>'
+                            +'</li>';
+                for(var j = 0; j < pageCount; j++){
+                    pageStr +=  '<li data-page="'+(j+1)+'" class="'+(page == (j+1)?"active":"")+'"><a href="javascript:;">'+(j+1)+'</a></li>'
+                }
+                pageStr += '<li data-page="add">'
+                    + '<a href="javascript:;" aria-label="Next">'
+                    +     '<span aria-hidden="true">&raquo;</span>'
+                    + '</a>'
+                    +'</li>';
+                $(".pagination").html(pageStr);
+
+                $(".pagination li").click(function(){
+                    var dataPage = $(this).attr("data-page");
+                    if(dataPage == "reduce" && page!=1){
+                        initInfo(page-1);
+                    }else if(dataPage == "add" && page!=pageCount){
+                        initInfo(page+1);
+                    }else if(parseInt(dataPage)){
+                        initInfo(dataPage)
+                    }
+                })
+            });
+        }
+
+        $(".btn").on("click",function(e){
+            e.preventDefault();
+            $.post("/submit",{
+                "name" : $("#name").val(),
+                "message" : $("#message").val()
+            },function(result){
+                if(result.errCode === 0){
+                    $(".alert-success").fadeIn();
+                    initInfo(1);
+                }else{
+                    $(".alert-danger").fadeIn();
+                };
+                setTimeout(function(){
+                    $(".alert").fadeOut();
+                },2000)
+            })
+        })
+    })
+</script>
+</body>
+</html>
